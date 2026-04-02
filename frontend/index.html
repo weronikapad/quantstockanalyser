@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Quant</title>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --bg: #f7f6f7;
+                --surface: #ffffff;
+                --border: #e8e6e0;
+                --border-strong: #d0cdc4;
+                --text: #1a1916;
+                --muted: #370051;
+                --accent: #1a1916;
+                --pink: hsl(323, 61%, 52%);
+                --pink-bg: #e6a5cd;
+                --pink-border: rgb(131, 0, 85);
+                --font-sans: "DM Sans", sans-serif;
+                --font-mono: "DM Mono", monospace;
+                --radius: 12px;
+                --shadow: rgba(58, 55, 55, 0.1);
+            }
+
+            * { margin:0; padding:0; box-sizing:border-box;}
+
+            body {
+                font-family: var(--font-sans);
+                background: var(--bg);
+                color: var(--text);
+                min-height: 100vh;
+                font-size: 14px;
+            }
+
+            /* ---- LAYOUT ---- */
+            .app {
+                max-width: 960px;
+                margin: 0 auto;
+                padding: 40px 24px 100px;
+            }
+
+            /*----HEADER----*/
+            .header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 40px;
+            }
+
+            .logo-name {
+                font-family: var(--font-mono);
+                font-size: 22px;
+                font-weight: 500;
+                color: var(--text);
+                text-decoration: none;
+            }
+
+            .logo-name-expalantion {
+                font-size: 22px;
+                font-weight: 300;
+                color: var(--text);
+                text-decoration: none;
+            }
+
+            .logo-sub {
+                font-size: 12px;
+                color: var(--muted);
+                margin-top: 2px;
+                font-weight: 300;
+            }
+
+            /*----SEARCH----*/
+            .search-wrap {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 40px;
+            }
+
+            .ticker-input {
+                flex: 1;
+                background: var(--surface);
+                border: 1px solid var(--border-strong);
+                border-radius: var(--radius);
+                padding: 12px 16px;
+                font-size: 16px;
+                font-family: var(--font-mono);
+                color: var(--text);
+                font-weight: 500;
+                outline: none;
+                text-transform: uppercase;
+                letter-spacing : 3px;
+            }
+
+            .ticker-input:focus {
+                border-color: var(--accent);
+            }
+            .ticker-input::placeholder {
+                color: var(--muted); 
+                letter-spacing:2px;
+                font-weight: 300;
+            }
+
+            .btn {
+                padding: 14px 24px;
+                border-radius: var(--radius);
+                font-family: var(--font-sans);
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                border: none;
+                white-space: nowrap;
+            }
+
+            .btn-primary {
+                background: var(--accent);
+                color: #fff;
+                border-color: var(--accent);
+            }
+
+            .btn-primary:hover {
+                opacity: 0.85;
+            }
+            .btn-primary:disabled {
+                opacity: 0.4;
+                cursor: not-allowed;
+            }
+
+            .btn-ghost {
+                background: transparent;
+                color: var(--muted);
+                border-color: var(--pink-border);
+            }
+
+            .btn-ghost:hover {
+                color: var(--text);
+                border-color: var(--pink-border);
+            }
+
+            /*----COMPANY HEADER----*/
+            .company-bar.visible { display: flex; }
+            .company-bar {
+                display: none;
+                align-items: baseline;
+                gap: 12px;
+                margin-bottom: 24px;
+                padding-bottom: 24px;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .company-name {
+                font-size: 20px;
+                font-weight: 600;
+            }
+
+            .company-ticker {
+                font-family: var(--font-mono);
+                font-size: 13px;
+                color: var(--muted);
+            }
+
+            .company-price {
+                margin-left: auto;
+                font-family: var(--font-mono);
+                font-size: 24px;
+                font-weight: 500;
+            }
+
+            .company-change {
+                font-family: var(--font-mono);
+                font-size: 12px;
+                padding: 3px 8px;
+                border-radius: 6px;
+                font-weight: 500;
+            }
+
+            .change-up {
+                background: var(--pink-bg);
+                color: var(--pink);
+            }
+            .change-down {
+                background: var(--pink-bg);
+                color: var(--pink);
+            }
+
+            /*----GRID----*/
+            .grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;;
+                gap: 16px;
+            }
+
+            .grid-full {
+                grid-column: span 2;
+            }
+
+            /*----CARDS----*/
+            .card {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                padding: 20px;
+            }
+
+            .card-label {
+                font-size: 12px;
+                font-weight: 500;
+                letter-spacing: 2px;
+                text-transform: uppercase;
+                color: var(--muted);
+                margin-bottom: 16px;
+            }
+
+            /*---QUANTUM STATES---*/
+            .states-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 12px;
+            }
+
+            .state-box {
+                font-weight: 500;
+                border-radius: 8px;
+                padding: 16px;
+                text-align: center;
+                border: 1px solid transparent;
+            }
+
+            .state-box.bull {
+                background: var(--pink-bg);
+                border-color: var(--pink-border);
+            }
+
+            .state-box.neutral {
+                background: var(--pink-bg);
+                border-color: var(--pink-border);
+
+            }
+
+            .state-box.bear {
+                background: var(--pink-bg);
+                border-color: var(--pink-border);
+            }
+
+            .state-label {
+                font-family: var(--font-mono);
+                font-size: 10px;
+                letter-spacing: 1px;
+                margin-bottom: 8px;
+            }
+
+            .state-val {
+                font-family: var(--font-mono);
+                font-size: 28px;
+                font-weight: 500;
+                color: var(--text);
+            }
+
+            .state-box.bull .state-val { color: var(--pink); }
+
+            .state-box.neutral .state-val { color: var(--pink); }
+
+            .state-box.bear .state-val { color: var(--pink); }
+
+            .state-sub {
+                font-size: 10px;
+                color: var(--muted);
+                margin-top: 4px;
+            }
+
+            /*----DOMINANT BADGE---*/
+            .dominant-row {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-top: 14px;
+                padding-top: 14px;
+                border-top: 1px solid var(--border);
+                font-size: 12px;
+                color: var(--muted);
+            }
+            .dominant-badge {
+                padding: 3px 10px;
+                border-radius: 20px;
+                font-family: var(--font-mono);
+                font-size: 11px;
+                font-weight: 500;
+            }
+
+            .badge-bull {
+                background: var(--pink-bg);
+                color: var(--pink);
+
+            }
+
+            .badge-neutral {
+                background: var(--pink-bg);
+                color: var(--pink);
+            }
+
+            .badge-bear {
+                background: var(--pink-bg);
+                color: var(--pink);
+            }
+
+            /*---METRICS---*/
+            .metrics-list {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 0px;
+            }
+
+            .metric-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px 0;
+                font-size: 12px;
+                color: var(--muted);
+                border-bottom: 1px solid var(--border);
+            }
+
+            .metric-row:last-child {
+                border-bottom: none;
+            }
+            .metric-name {
+                color: var(--muted);
+            }
+            .metric-value {
+                font-family: var(--font-mono);
+                font-weight: 500;
+            }
+
+            /*---PRICE CHART---*/
+            canvas#priceChart {
+                width: 100%;
+                height: 120px;
+                display: block;
+            }
+
+            /*---STOCK METRICS---*/
+            .stock-metrics {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 0;
+            }
+
+            .stock-metric {
+                padding: 0 16px;
+                border-right: 1px solid var(--border);
+            }
+
+            .stock-metric:first-child {
+                padding-left: 0;
+            }
+
+            .stock-metric:last-child {
+                border-right: none;
+            }
+
+            .stock-metric-label {
+                font-size: 10px;
+                color: var(--muted);
+                margin-bottom: 4px;
+            }
+
+            .stock-metric-val {
+                font-family: var(--font-mono);
+                font-size: 15px;
+                font-weight: 500;;
+            }
+            
+            /*----EMPTY STATE---*/
+            .empty {
+                grid-column: span 2;
+                text-align: center;
+                padding: 60px 20px;
+                color: var(--muted);
+            }
+
+            .empty-icon {
+                font-size: 40px;
+                margin-bottom: 12px;
+                opacity: 0.5;
+            }
+
+            .empty p {
+                font-size: 12px;
+                line-height: 16px;
+            }
+
+            /*---CHAT BUTTON---*/
+            .chat-fab {
+                position: fixed;
+                right: 20px;
+                bottom: 20px;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background: var(--accent);
+                color: #fff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                z-index: 100;
+            }
+
+            .chat-fab:hover {
+                transform: scale(1.05);
+
+            }
+            .chat-fab:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                transform: none;
+            }
+            /*--CHATPANEL---*/
+            .chat-panel {
+                position: fixed;
+                right: 28px;
+                bottom: 90px;
+                width: 400px;
+                height: 460px;
+                background: var(--surface);
+                border: 1px solid var(--border-strong);
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                z-index: 101;
+                overflow: hidden;
+                display: none;
+                flex-direction: column;
+            }
+
+            .chat-panel.open {
+                display: flex;
+            }
+
+            .chat-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 14px 16px;
+                border-bottom: 1px solid var(--border);
+                
+            }
+             
+            .chat-header-title {
+                font-size: 12px;
+                font-weight: 500;
+            }
+
+            .chat-close {
+                background: none;
+                border: none;
+                color: var(--muted);
+                font-size: 16px;
+                cursor: pointer;
+                line-height: 1;
+            }
+
+            .chat-messages {
+                flex: 1;
+                overflow-y: auto;
+                padding: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .chat-messages::webkit-scrollbar {
+                width: 3px;
+
+            }
+
+            .chat-meesages::webkit-scrollbar-thumd {
+                background: var(--border-strong);
+                border-radius: 2px;
+            }
+
+            .msg-role {
+                font-size: 10px;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                color: var(--muted);
+                font-family: var(--font-mono);
+            }
+
+            .msg-body {
+                font-size: 12px;
+                line-height: 1.6;
+                padding: 8px 12px;
+                border-radius: 8px;
+                background: var(--bg);
+                color: var(--text);
+            }
+
+            .msg.user .msg-body {
+                background: var(--accent);
+                color: #fff;
+
+            }
+
+            .chat-input-row{
+                padding: 12px;
+                border-top: 1px solid var(--border);
+                display: flex;
+                gap: 8px;
+            }
+
+            .chat-input {
+                flex: 1;
+                border: 1px solid var(--border-strong);
+                font-family: var(--font-sans);
+                font-size: 12px;
+                padding: 8px 12px;
+                border-radius: 8px;
+                background: var(--surface);
+                color: var(--text);
+                outline: none;
+            }
+
+            .chat-input:focus {
+                border-color: var(--accent);
+
+            }
+
+            .btn-send {
+                border: none;
+                background: var(--accent);
+                padding: 8px 12px;
+                font-size: 12px;
+                font-weight: 500;
+                font-family: var(--font-sans);
+                cursor: pointer;
+                color: #fff;
+                border-radius: 8px;
+            }
+
+            .btn-send:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity:0;
+                    transform:translateY(6px);
+                }
+                to {
+                    opacity:1;
+                    transform:translateY(0);
+                }
+            }
+            .card {
+                animation: fadeIn 0.2s ease-in;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="app">
+            <header>
+                <div>
+                    <div class="logo-name">Basic quantum mechanical stock predictor</div>
+                    <div class="logo-name-explanation">(It uses quantum mechanical equations based on the last 45 days of the stock data)</div>
+                </div>
+            </header>
+            <div class="search-wrap">
+                <input class="ticker-input" 
+                    id="tickerInput"
+                    type="text"
+                    maxlength="6"
+                    placeholder="ticker..."
+                    autocomplete="off"/>
+
+                <button class="btn btn-primary" id="btnAnalyse" onclick="runAnalysis()">Analyse</button>
+                <button class="btn btn-ghost" onclick="clearAll()">Reset</button>
+            
+            </div>
+        
+            
+            <div class="company-bar" id="companyBar">
+                <div class="company-name" id="companyName">-</div>
+                <div class="company-ticker" id="companyTicker">-</div>
+                <div class="company-price" id="companyPrice">-</div>
+                <div class="company-change" id="companyChange">-</div>
+            </div>
+            <div class="grid" id="mainGrid">
+                <div class="empty">
+                    <div class="empty-icon">...</div>
+                    <p>Enter a ticker symbol<br>to run a quantum analysis</p>
+                </div>
+            </div>
+        </div>
+
+        <!--chat fab-->
+        <button class="chat-fab" id="chatFab" onclick="toggleChat()" disabled title="Run analysis first">?</button>
+
+        <!--chat panel-->
+        <div class="chat-panel" id="chatPanel">
+            <div class="chat-header">
+                <div class="chat-header-title">AI Analyst</div>
+                <button class="chat-close" onclick="toggleChat()">x</button>
+
+            </div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input-row">
+                <input class="chat-input" id="chatInput" type="text" placeholder="Ask about a stock..." onkeydown="if(event.key==='Enter')sendChat()"/>
+                    <button class="btn-send" id="btnSend" onclick="sendChat()" >Send</button>
+
+            </div>
+        </div>
+        <script>
+            const API_BASE = 'http://localhost:8000';
+            let chatHistory = [];
+            let currentTicker = null;
+            let currentQuantum = null;
+            let currentStock = null;
+            let chatOpen = false;
+            
+
+            //----TOGLE CHAT----
+            function toggleChat(){
+                chatOpen = !chatOpen;
+                document.getElementById('chatPanel').classList.toggle('open', chatOpen);
+              
+            }
+
+            //---ANALYSIS----
+            async function runAnalysis() {
+                const ticker = document.getElementById('tickerInput').value.trim().toUpperCase();
+
+                if (!ticker) return;
+
+                const btn = document.getElementById('btnAnalyse');
+                btn.disabled = true;
+                btn.innerText = 'Analysing...';
+
+                try {
+                    const res = await fetch(`${API_BASE}/api/analyze/${ticker}`);
+                    if (!res.ok) throw new Error('Analysis failed')
+                    const data = await res.json();
+
+                    currentTicker = ticker;
+                    currentQuantum = data.quantum;
+                    currentStock = data.stock;
+                    
+                    renderDashboard(data);
+                    document.getElementById('chatFab').disabled = false;
+                    chatHistory = [];
+                    document.getElementById('chatMessages').innerHTML = '';
+                    await sendAIMessage(true);
+                } catch(e) {
+                    alert('Error: ' + e.message);
+                }
+
+                btn.disabled = false;
+                btn.textContent = 'Analyse';
+
+            }
+
+            function renderDashboard(data) {
+                const q = data.quantum;
+                const s = data.stock;
+                const change = s.change_pct || s.change || 0;
+                const isUp = change >= 0;
+
+                //company bar
+                const bar = document.getElementById('companyBar');
+                bar.classList.add('visible');
+                document.getElementById('companyName').textContent = data.company;
+                document.getElementById('companyTicker').textContent = data.ticker;
+                document.getElementById('companyPrice').textContent = '$' + s.price;
+                const changeEl = document.getElementById('companyChange');
+                changeEl.textContent = (isUp ? '+' : '') + change + '%';
+                changeEl.className = 'company-change ' + (isUp ? 'change-up' : 'change-down');
+
+                // Main grid
+                document.getElementById('mainGrid').innerHTML = `
+                    <!--Quantum States--->
+                    <div class="card grid-full">
+                        <div class="card-label">Quantum States</div>
+                        <div class="states-row">
+                        <div class="state-box bull">
+                            <div class="state-label">Bull</div>
+                            <div class="state-val">${q.bull_pct}%</div>
+                            
+                        </div>
+                        <div class="state-box neutral">
+                            <div class="state-label">Neutral</div>
+                            <div class="state-val">${q.neutral_pct}%</div>
+                            
+                        </div>
+                        
+                        <div class="state-box bear">
+                            <div class="state-label">Bear</div>
+                            <div class="state-val">${q.bear_pct}%</div>
+                            
+                        </div>
+                    </div>
+                    <div class="dominant-row">
+                        <span>Collapsed state</span>
+                        <span class="dominant-badge badge-${q.dominant}">${q.dominant.toUpperCase()}</span>
+                        <span style="margin-left:auto; font-size:12px;">Superposition: <strong>${q.superposition}</strong></span>
+                    </div>
+                    </div>
+
+                    <!--Price Chart--->
+                    <div class="card grid-full">
+                        <div class="card-label">30 day price history</div>
+                        <canvas id="priceChart" width="600" height="120"></canvas>
+                    </div>
+
+                    <!--Stock Metrics-->
+                    <div class="card grid-full">
+                        <div class="card-label">market data</div>
+                        <div class="stock-metrics">
+                            <div class="stock-metric">
+                                <div class="stock-metric-label">52W High</div>
+                                <div class="stock-metric-val">${s.high_52w !== 'N/A' && s.high_52w ? '$'+s.high_52w : s.high ? '$'+s.high : 'N/A'}</div>
+                            </div>
+                            <div class="stock-metric">
+                                <div class="stock-metric-label">52W Low</div>
+                                <div class="stock-metric-val">${s.low_52w !== 'N/A' && s.low_52w ? '$'+s.low_52w : s.low ? '$'+s.low : 'N/A'}</div>
+                            </div>
+                            <div class="stock-metric">
+                                <div class="stock-metric-label">Market Cap</div>
+                                <div class="stock-metric-val">${fmtCap(s.market_cap)}</div>
+                            </div>
+                            <div class="stock-metric">
+                                <div class="stock-metric-label">P/E Ratio</div>
+                                <div class="stock-metric-val">${s.pe_ratio !== 'N/A' && s.pe_ratio ? Number(s.pe_ratio).toFixed(1) : 'N/A'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Quantum Metrics-->
+                    <div class="card">
+                        <div class="card-label">Quantum Metrics</div>
+                        <div class="metrics-list">
+                            <div class="metric-row"><span class="metric-name">Entanglement</span><span class="metric-value">${q.entanglement}</span></div>
+                            <div class="metric-row"><span class="metric-name">Coherence</span><span class="metric-value">${q.coherence}</span></div>
+                            <div class="metric-row"><span class="metric-name">Uncertainty</span><span class="metric-value">${q.uncertainty}</span></div>
+                        </div>
+                    </div>
+
+                    <!--More Metrics-->
+                    <div class="card">
+                        <div class="card-label">Signal Metrics</div>
+                        <div class="metrics-list">
+                            <div class="metric-row"><span class="metric-name">Momentum</span><span class="metric-value">${q.momentum}</span></div>
+                            <div class="metric-row"><span class="metric-name">Ann. Volatility</span><span class="metric-value">${q.hist_volatility}%</span></div>
+                            <div class="metric-row"><span class="metric-name">Phase delta</span><span class="metric-value">${q.phase}</span></div>
+                        </div>
+                    </div>
+                `;
+
+                //Draw price chart
+                if (s.closes && s.closes.length > 1) drawChart(s.closes, isUp);
+            }
+
+
+            function drawChart(closes, isUp) {
+                const canvas = document.getElementById('priceChart');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                const W = canvas.width, H = canvas.height;
+                ctx.clearRect(0, 0, W, H);
+
+                const momentum = currentQuantum.momentum || 0;
+                const vol = (currentQuantum.hist_volatility || 5) / 100 / Math.sqrt(252);
+                const lastPrice = closes[closes.length - 1];
+                const predDays = 7;
+                const prediction = [];
+                for (let i = 1; i <= predDays; i++) {
+                    const drift = momentum * 0.01 * i;
+                    const noise = (Math.random() - 0.5) * vol * Math.sqrt(i) * lastPrice;
+                    prediction.push(lastPrice * (1 + drift) + noise);
+                }
+
+                const allPrices = [...closes, ...prediction];
+                const mn = Math.min(...allPrices), mx = Math.max(...allPrices);
+                const range = mx - mn || 1;
+                const pad = 8;
+                const totalPoints = closes.length + predDays;
+                const toY = v => H - pad - ((v - mn) / range) * (H - 2 * pad);
+                const toX = i => i / (totalPoints - 1) * (W - 2 * pad) + pad;
+                const color = 'hsl(323, 61%, 52%)';
+
+                ctx.beginPath();
+                ctx.moveTo(toX(0), toY(closes[0]));
+                closes.forEach((c, i) => ctx.lineTo(toX(i), toY(c)));
+                ctx.lineTo(toX(closes.length - 1), H);
+                ctx.lineTo(toX(0), H);
+                ctx.closePath();
+                const grad = ctx.createLinearGradient(0, 0, 0, H);
+                grad.addColorStop(0, 'rgba(195, 65, 140, 0.15)');
+                grad.addColorStop(1, 'rgba(255,255,255,0)');
+                ctx.fillStyle = grad;
+                ctx.fill();
+
+                ctx.beginPath();
+                closes.forEach((c, i) => i === 0 ? ctx.moveTo(toX(i), toY(c)) : ctx.lineTo(toX(i), toY(c)));
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.setLineDash([4, 4]);
+                ctx.moveTo(toX(closes.length - 1), toY(lastPrice));
+                prediction.forEach((p, i) => ctx.lineTo(toX(closes.length + i), toY(p)));
+                ctx.strokeStyle = 'rgba(195, 65, 140, 0.4)';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                
+
+                ctx.beginPath();
+                ctx.setLineDash([2, 3]);
+                ctx.moveTo(toX(closes.length - 1), 0);
+                ctx.lineTo(toX(closes.length - 1), H);
+                ctx.strokeStyle = 'rgba(154,150,144,0.3)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+                //Fill
+                ctx.beginPath();
+                ctx.moveTo(toX(0), toY(closes[0]));
+                closes.forEach((c,i) => ctx.lineTo(toX(i), toY(c)));
+                ctx.lineTo(toX(closes.length-1), H);
+                ctx.lineTo(toX(0), H);
+                ctx.closePath();
+                const grad = ctx.createLinearGradient(0,0,0,H);
+                grad.addColorStop(0, 'rgba(195, 65, 140, 0.15)');
+                grad.addColorStop(1, 'rgba(255,255,255,0)');
+                ctx.fillStyle = grad;
+                ctx.fill();
+
+                // Line
+                ctx.beginPath();
+                closes.forEach((c,i) => i===0 ? ctx.moveTo(toX(i),toY(c)) : ctx.lineTo(toX(i), toY(c)));
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            
+
+            function fmtCap(v)  {
+                if (!v || v === 'N/A') return 'N/A';
+                if (v >= 1e12) return '$' + (v/1e12).toFixed(2) + 'T';
+                if (v >= 1e9) return '$' + (v/1e9).toFixed(2) + 'B';
+                if (v >= 1e6) return '$' + (v/1e6).toFixed(2) + 'M';
+                return '$' + v;
+            }
+
+            // ---CHAT---
+            async function sendChat() {
+                const input = document.getElementById('chatInput');
+                const msg = input.value.trim();
+                if (!msg || !currentTicker) return;
+                input.value  = '';
+
+                appendMessage('user', msg);
+                chatHistory.push({role:'user', content:msg});
+                await sendAIMessage(false);
+            }
+
+            async function sendAIMessage(isInitial) {
+                const typingEl = appendMessage('ai', '...');
+                try {
+                    const res = await fetch(`${API_BASE}/api/chat`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            ticker: currentTicker,
+                            quantum: currentQuantum,
+                            stock: currentStock,
+                            history: isInitial ? [] : chatHistory.slice(-10),
+                            message: isInitial ? `Give a 3 sentence quantum analysis of ${currentTicker}. Reference the dominant state. Plain text only, no markdown.` : chatHistory[chatHistory.length-1].content
+                        })
+                    });
+                    const data = await res.json();
+                    typingEl.textContent = data.reply;
+                    if (!isInitial) chatHistory.push({role:'assistant', content:data.reply});
+                } catch(e) {
+                    typingEl.textContent = 'Could not reach backend';
+                }
+            }
+
+            function appendMessage(role, text) {
+            const c = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = `msg ${role}`;
+            div.innerHTML = `
+                
+                <div class="msg-body">${text}</div>
+            `;
+
+            c.appendChild(div);
+            c.scrollTop = c.scrollHeight;
+            return div.querySelector('.msg-body');
+        }
+
+        function clearAll() {
+            currentTicker = null;
+            currentQuantum = null;
+            currentStock = null;
+            chatHistory = [];
+            document.getElementById('tickerInput').value = '';
+            document.getElementById('companyBar').classList.remove('visible');
+            document.getElementById('mainGrid').innerHTML = `
+                <div class="empty">
+                    <div class="empty-icon">...</div>
+                    <p>Enter a ticker symbol<br>to run a quantum analysis</p>
+                </div>
+            `;
+            document.getElementById('chatFab').disabled = true;
+            document.getElementById('chatMessages').innerHTML = '';
+            if (chatOpen) toggleChat();
+        }
+
+        document.getElementById('tickerInput').addEventListener('keydown', e => {
+            if (e.key === 'Enter') runAnalysis();
+        });
+
+    
+        </script>
+    </body>
+</html>
