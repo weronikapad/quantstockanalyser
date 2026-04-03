@@ -62,4 +62,4 @@ def run_quantum_analysis(closes: list, volumes: list) -> dict:
        "momentum": round(float(momentum), 4),
     }
 
-
+   
