@@ -5,7 +5,11 @@ Quantum inspired web app that uses yfinace for real stock data, and simple quant
 ## Live URL
  
 **Frontend**: https://quantstockanalyser.vercel.app/
+
 **Backend**: https://quantstockanalyser.onrender.com
+
+## How to use
+in the "TICKER..." bracket you put in your stock name that is recognised by yahoo finance (if you're not sure if the name will be recognised you can check at: https://finance.yahoo.com/?guccounter=1&guce_referrer=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8&guce_referrer_sig=AQAAAIlZx8oCgU-9PuLiTiejMql5M5dESiZdq3h4kvCypenMClHk9cWoGMbR9LcjgD4eIeKEluTK-lswiXsTuQyTMaJHXVjpd1_imwN1ftvANSweM4z4rTVEQyVH0YysOJYR7cqq4Doue9tbXVI1eS9mApOyd5ACK520nd03QRGmw2_D) after you put your stock in you can hit analyse and the app will output the analysis. The black dot on the right bottom of the screen is an AI chat box that you are free to use by clicking on it. If you want to analyse another stock you can refresh the page.
  
 ## What it does
  
